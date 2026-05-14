@@ -4,10 +4,10 @@ on:
   push:
     branches: ["main"]
 
+# Push built static files to branch `gh-pages` (matches package.json `deploy` / gh-pages -d dist).
+# Repository Pages must stay: Settings → Pages → Build from branch → gh-pages / (root).
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: "pages"
@@ -16,8 +16,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Do not use environment "github-pages" unless Settings → Environments allows branch main.
-
     steps:
       - uses: actions/checkout@v4
 
@@ -32,11 +30,9 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          branch: gh-pages
+          folder: dist
+          clean: true
